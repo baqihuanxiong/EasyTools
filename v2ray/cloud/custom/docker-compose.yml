@@ -9,10 +9,10 @@ services:
     volumes:
       - /etc/v2ray/proxy.json:/etc/v2ray/config.json
     environment:
-      - VIRTUAL_HOST=proxy-hk-1.lwshen.fun
+      - VIRTUAL_HOST=
       - VIRTUAL_PORT=10000
-      - LETSENCRYPT_HOST=proxy-hk-1.lwshen.fun
-      - LETSENCRYPT_EMAIL=lw390937635@163.com
+      - LETSENCRYPT_HOST=
+      - LETSENCRYPT_EMAIL=
     networks:
       - proxy-tier
       - default
@@ -25,10 +25,10 @@ services:
     volumes:
       - /etc/v2ray/tunnel.json:/etc/v2ray/config.json
     environment:
-      - VIRTUAL_HOST=tunnel-hk-1.lwshen.fun
+      - VIRTUAL_HOST=
       - VIRTUAL_PORT=10001
-      - LETSENCRYPT_HOST=tunnel-hk-1.lwshen.fun
-      - LETSENCRYPT_EMAIL=lw390937635@163.com
+      - LETSENCRYPT_HOST=
+      - LETSENCRYPT_EMAIL=
     networks:
       - proxy-tier
       - default
@@ -42,10 +42,10 @@ services:
     ports:
       - 8080:8080
     environment: 
-      - VIRTUAL_HOST=ipserver-hk-1.lwshen.fun
+      - VIRTUAL_HOST=
       - VIRTUAL_PORT=8080
-      - LETSENCRYPT_HOST=ipserver-hk-1.lwshen.fun
-      - LETSENCRYPT_EMAIL=lw390937635@163.com
+      - LETSENCRYPT_HOST=
+      - LETSENCRYPT_EMAIL=
     networks:
       - proxy-tier
       - default
@@ -63,7 +63,7 @@ services:
       - vhost.d:/etc/nginx/vhost.d
       - html:/usr/share/nginx/html
       - /var/run/docker.sock:/tmp/docker.sock:ro
-      - /etc/nginx/proxy.conf:/etc/nginx/vhost.d/ipserver-hk-1.lwshen.fun_location.conf
+      - /etc/nginx/proxy.conf:/etc/nginx/vhost.d/{}_location.conf
     networks:
       - proxy-tier
     depends_on: 
