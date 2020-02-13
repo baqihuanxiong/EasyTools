@@ -1,0 +1,61 @@
+{
+  "log": {
+    "loglevel": "warning",
+    "access": "",
+    "error": ""
+  },
+  "inbounds": [
+    {
+      "tag": "proxy",
+      "port": 10000,
+      "protocol": "vmess",
+      "settings": {
+        "clients": [
+          {
+            "id": "0c617747-9dd0-40fe-9306-93a4edb8ad46",
+            "alterId": 64
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "ws",
+        "wsSettings": {
+          "path": "/proxy"
+        }
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "tag": "block",
+      "protocol": "blackhole",
+      "settings": {}
+    },
+    {
+      "tag": "direct",
+      "protocol": "freedom",
+      "settings": {}
+    }
+  ],
+  "routing": {
+    "rules": [
+      {
+        "type": "field",
+        "inboundTag": [
+          "proxy"
+        ],
+        "protocol": [
+          "bittorrent"
+        ],
+        "outboundTag": "block"
+      },
+      {
+        "type": "field",
+        "inboundTag": [
+          "proxy"
+        ],
+        "outboundTag": "direct"
+      }
+    ]
+  }
+}

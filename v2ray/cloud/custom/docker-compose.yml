@@ -1,0 +1,93 @@
+version: '3'
+
+services:
+  v2ray-proxy:
+    build: ./v2ray
+    restart: always
+    ports: 
+      - 10000:10000
+    volumes:
+      - /etc/v2ray/proxy.json:/etc/v2ray/config.json
+    environment:
+      - VIRTUAL_HOST=proxy-hk-1.lwshen.fun
+      - VIRTUAL_PORT=10000
+      - LETSENCRYPT_HOST=proxy-hk-1.lwshen.fun
+      - LETSENCRYPT_EMAIL=lw390937635@163.com
+    networks:
+      - proxy-tier
+      - default
+
+  v2ray-tunnel:
+    build: ./v2ray
+    restart: always
+    ports: 
+      - 10001:10001
+    volumes:
+      - /etc/v2ray/tunnel.json:/etc/v2ray/config.json
+    environment:
+      - VIRTUAL_HOST=tunnel-hk-1.lwshen.fun
+      - VIRTUAL_PORT=10001
+      - LETSENCRYPT_HOST=tunnel-hk-1.lwshen.fun
+      - LETSENCRYPT_EMAIL=lw390937635@163.com
+    networks:
+      - proxy-tier
+      - default
+    depends_on: 
+      - v2ray-proxy
+  
+  ipserver:
+    build: ./ipserver
+    restart: always
+    command: python /server.py -t 32734f18-e266-4ac7-a145-cf3d508acfde
+    ports:
+      - 8080:8080
+    environment: 
+      - VIRTUAL_HOST=ipserver-hk-1.lwshen.fun
+      - VIRTUAL_PORT=8080
+      - LETSENCRYPT_HOST=ipserver-hk-1.lwshen.fun
+      - LETSENCRYPT_EMAIL=lw390937635@163.com
+    networks:
+      - proxy-tier
+      - default
+  
+  proxy:
+    image: jwilder/nginx-proxy:alpine
+    restart: always
+    ports:
+      - 80:80
+      - 443:443
+    labels:
+      com.github.jrcs.letsencrypt_nginx_proxy_companion.nginx_proxy: "true"
+    volumes:
+      - certs:/etc/nginx/certs:ro
+      - vhost.d:/etc/nginx/vhost.d
+      - html:/usr/share/nginx/html
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - /etc/nginx/proxy.conf:/etc/nginx/vhost.d/ipserver-hk-1.lwshen.fun_location.conf
+    networks:
+      - proxy-tier
+    depends_on: 
+      - v2ray-proxy
+      - v2ray-tunnel
+      - ipserver
+
+  letsencrypt-companion:
+    image: jrcs/letsencrypt-nginx-proxy-companion
+    restart: always
+    volumes:
+      - certs:/etc/nginx/certs
+      - vhost.d:/etc/nginx/vhost.d
+      - html:/usr/share/nginx/html
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - proxy-tier
+    depends_on:
+      - proxy
+    
+volumes:
+  certs:
+  vhost.d:
+  html:
+    
+networks:
+  proxy-tier:
