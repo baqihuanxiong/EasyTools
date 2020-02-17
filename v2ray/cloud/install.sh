@@ -38,7 +38,7 @@ cloud::install_templete_custom() {
 }
 
 cloud::install_templete_nginx() {
-    cd custom
+    cd nginx
     mkdir -p /etc/v2ray
     cp v2ray/*.json /etc/v2ray
     docker-compose up -d
