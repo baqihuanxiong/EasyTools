@@ -7,21 +7,18 @@
   "inbounds": [
     {
       "tag": "proxy",
+      "listen": "127.0.0.1",
       "port": 10000,
       "protocol": "vmess",
       "settings": {
         "clients": [
           {
-            "id": "ENTER UUID HERE",
-            "alterId": 64
+            "id": "ENTER UUID HERE"
           }
         ]
       },
       "streamSettings": {
-        "network": "ws",
-        "wsSettings": {
-          "path": "/proxy"
-        }
+        "network": "tcp"
       }
     }
   ],
@@ -41,9 +38,6 @@
     "rules": [
       {
         "type": "field",
-        "inboundTag": [
-          "proxy"
-        ],
         "protocol": [
           "bittorrent"
         ],

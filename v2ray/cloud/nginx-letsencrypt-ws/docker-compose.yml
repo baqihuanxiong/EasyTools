@@ -3,6 +3,7 @@ version: '3'
 services:
   v2ray:
     build: ./v2ray
+    container_name: v2ray
     restart: always
     ports: 
       - 10000:10000
@@ -13,12 +14,11 @@ services:
       - VIRTUAL_PORT=10000
       - LETSENCRYPT_HOST=
       - LETSENCRYPT_EMAIL=
-    networks:
-      - proxy-tier
-      - default
+    network_mode: "host"
   
   proxy:
     image: jwilder/nginx-proxy:alpine
+    container_name: nginx
     restart: always
     ports:
       - 80:80
@@ -30,19 +30,18 @@ services:
       - vhost.d:/etc/nginx/vhost.d
       - html:/usr/share/nginx/html
       - /var/run/docker.sock:/tmp/docker.sock:ro
-    networks:
-      - proxy-tier
+    network_mode: "host"
 
   letsencrypt-companion:
     image: jrcs/letsencrypt-nginx-proxy-companion
+    container_name: letsencrypt
     restart: always
     volumes:
       - certs:/etc/nginx/certs
       - vhost.d:/etc/nginx/vhost.d
       - html:/usr/share/nginx/html
       - /var/run/docker.sock:/var/run/docker.sock:ro
-    networks:
-      - proxy-tier
+    network_mode: "host"
     depends_on:
       - proxy
     
@@ -50,6 +49,3 @@ volumes:
   certs:
   vhost.d:
   html:
-    
-networks:
-  proxy-tier:

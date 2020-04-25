@@ -30,15 +30,21 @@ cloud::install_docker_compose() {
 
 cloud::install_templete_custom() {
     cd custom
-    mkdir -p /etc/v2ray
-    cp v2ray/*.json /etc/v2ray
-    mkdir -p /etc/nginx
-    cp nginx/*.conf /etc/nginx
+    # custom config
     docker-compose up -d
 }
 
-cloud::install_templete_nginx() {
-    cd nginx
+cloud::install_templete_haproxy-self-signed-tcp() {
+    cd haproxy-self-signed-tcp
+    mkdir -p /etc/v2ray
+    cp v2ray/*.json /etc/v2ray
+    cp -r nginx /etc/
+    cp -r haproxy /etc/
+    docker-compose up -d
+}
+
+cloud::install_templete_nginx-letsencrypt-ws() {
+    cd nginx-letsencrypt-ws
     mkdir -p /etc/v2ray
     cp v2ray/*.json /etc/v2ray
     docker-compose up -d

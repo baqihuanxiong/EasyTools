@@ -1,0 +1,41 @@
+version: '3'
+
+services:
+  v2ray:
+    build: ./v2ray
+    container_name: v2ray
+    restart: always
+    volumes:
+      - /etc/v2ray/config.json:/etc/v2ray/config.json
+      #- /var/lib/v2ray:/var/lib/v2ray
+    network_mode: "host"
+  
+  ipserver:
+    build: ./ipserver
+    container_name: ipserver
+    restart: always
+    command: python /server.py -p 9000
+    network_mode: "host"
+  
+  nginx:
+    image: nginx:1.17.9
+    container_name: nginx
+    restart: always
+    volumes:
+      - /etc/nginx:/etc/nginx
+    network_mode: "host"
+    depends_on:
+      - ipserver
+  
+  haproxy:
+    image: haproxy:2.1.4
+    container_name: haproxy
+    restart: always
+    volumes:
+      - /etc/haproxy:/usr/local/etc/haproxy
+      - /etc/certs:/etc/ssl/private
+      #- /var/lib/v2ray:/var/lib/v2ray
+    network_mode: "host"
+    depends_on:
+      - v2ray
+      - nginx
